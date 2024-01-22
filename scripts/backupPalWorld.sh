@@ -12,8 +12,8 @@ function backup_palworld() {
   cd $PALWORLD_DIR
   tar -cf - "Pal" | lz4 > "$BACKUP_DIR/archive_$(date +%Y%m%d%H%M).tar.lz4"
 
-  # Delete backups older than 3 hours, we have limited space
-  find "$BACKUP_DIR" -type f -mmin +180 -exec rm {} \;
+  # Delete backups older than 1 hour, we have limited space
+  find "$BACKUP_DIR" -type f -mmin +60 -exec rm {} \;
 }
 
 function restore_backup() {
