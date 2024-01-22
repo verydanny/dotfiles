@@ -10,7 +10,7 @@ function backup_palworld() {
 
   # Backup palworld dir
   cd $PALWORLD_DIR
-  tar -cf - "Pal" | lz4 > "$BACKUP_DIR/archive_$(date +%Y%m%d%H%M).tar.lz4"
+  tar -cf - "Pal" | lz4 > "$BACKUP_DIR/Pal_$(date +%Y%m%d%H%M).tar.lz4"
 
   # Delete backups older than 1 hour, we have limited space
   find "$BACKUP_DIR" -type f -mmin +60 -exec rm {} \;
