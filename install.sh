@@ -1,5 +1,7 @@
 #!/bin/sh
 
+XDG_CONFIG_HOME="$HOME/.config"
+ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 has_xcode=$( if xcode-select --version &>/dev/null; then echo 1; else echo 0; fi )
 has_homebrew=$( if command -v brew &>/dev/null; then echo 1; else echo 0; fi )
 
@@ -53,6 +55,18 @@ install_fonts() {
 install_zsh() {
   if [ "$has_homebrew" ]; then
     brew install zsh zsh-completions
+    mkdir -p $ZDOTDIR
+    cp -r zsh $XDG_CONFIG_HOME
+  else
+    echo "Please install Homebrew first."
+  fi
+}
+
+install_files() {
+  if [ "$has_homebrew" ]; then
+    mkdir -p $ZDOTDIR
+    cp -r zsh $XDG_CONFIG_HOME
+    cp .zshenv $HOME
   else
     echo "Please install Homebrew first."
   fi
@@ -62,3 +76,4 @@ install_xcode
 install_homebrew
 install_fonts
 install_zsh
+install_files
