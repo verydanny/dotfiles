@@ -1,7 +1,19 @@
 #!/bin/sh
 
-XDG_CONFIG_HOME="$HOME/.config"
-ZDOTDIR="$XDG_CONFIG_HOME/zsh"
+CURRENT_DIR="$PWD"
+
+cat <<EOF >> $HOME/.zshenv
+export XDG_CONFIG_HOME="$CURRENT_DIR"
+export XDG_DATA_HOME="$CURRENT_DIR/local/share"
+export XDG_CACHE_HOME="$CURRENT_DIR/cache"
+
+export ZDOTDIR="$CURRENT_DIR/zsh"
+
+export HISTSIZE=10000                              # Maximum events for internal history
+export SAVEHIST=10000                              # Maximum events in history file
+export HISTFILE="$CURRENT_DIR/zsh/.zsh_history"    # History filepath
+EOF
+
 has_xcode=$( if xcode-select --version &>/dev/null; then echo 1; else echo 0; fi )
 has_homebrew=$( if command -v brew &>/dev/null; then echo 1; else echo 0; fi )
 
@@ -55,18 +67,6 @@ install_fonts() {
 install_zsh() {
   if [ "$has_homebrew" ]; then
     brew install zsh zsh-completions
-    mkdir -p $ZDOTDIR
-    cp -r zsh $XDG_CONFIG_HOME
-  else
-    echo "Please install Homebrew first."
-  fi
-}
-
-install_files() {
-  if [ "$has_homebrew" ]; then
-    mkdir -p $ZDOTDIR
-    cp -r zsh $XDG_CONFIG_HOME
-    cp .zshenv $HOME
   else
     echo "Please install Homebrew first."
   fi
@@ -76,4 +76,3 @@ install_xcode
 install_homebrew
 install_fonts
 install_zsh
-install_files
