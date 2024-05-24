@@ -1,0 +1,9 @@
+export XDG_CONFIG_HOME="${CURRENT_DIR}"
+export XDG_DATA_HOME="${CURRENT_DIR}/local/share"
+export XDG_CACHE_HOME="${CURRENT_DIR}/cache"
+
+export ZDOTDIR="${CURRENT_DIR}/zsh"
+
+export HISTSIZE=10000
+export SAVEHIST=10000
+export HISTFILE="${CURRENT_DIR}/zsh/.zsh_history"

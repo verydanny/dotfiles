@@ -3,18 +3,20 @@
 fpath=($ZDOTDIR/plugins $fpath)
 
 # +------------+
+# | FUNCTIONS  |
+# +------------+
+source "$ZDOTDIR/functions/cleanup.zsh"
+
+# +------------+
 # | NAVIGATION |
 # +------------+
 setopt AUTO_CD              # Go to folder path without using cd.
-
 setopt AUTO_PUSHD           # Push the old directory onto the stack on cd.
 setopt PUSHD_IGNORE_DUPS    # Do not store duplicates in the stack.
 setopt PUSHD_SILENT         # Do not print the directory stack after pushd or popd.
-
 setopt CORRECT              # Spelling correction
 setopt CDABLE_VARS          # Change directory to a path stored in a variable.
 setopt EXTENDED_GLOB        # Use extended globbing syntax.
-
 setopt HIST_SAVE_NO_DUPS    # Do not write a duplicate event to the history file.
 
 # +---------+
