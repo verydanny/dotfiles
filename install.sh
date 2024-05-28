@@ -15,3 +15,6 @@ is_lib_installed brew && lib_install git
 # Install FNM
 mkdir -p local/share/fnm
 is_lib_installed brew && lib_install fnm
+
+# Install Bun
+is_lib_installed brew && lib_install oven-sh/bun/bun
