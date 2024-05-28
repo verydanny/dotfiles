@@ -12,5 +12,4 @@ FNM_PATH="$XDG_CONFIG_HOME/local/share/fnm"
 if [ -d "$FNM_PATH" ]; then
   export PATH="$XDG_CONFIG_HOME/local/share/fnm:$PATH"
   eval "$(fnm env --use-on-cd --fnm-dir $XDG_CONFIG_HOME/local/share/fnm)"
-  echo "FNM WORKING"
 fi
