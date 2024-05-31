@@ -9,12 +9,12 @@ prompt_mycustomprompt_precmd() {
     local -a gitstatus
 
     # Use Git porcelain commands for faster execution
-    local git_status=$(command git status --porcelain -b 2>/dev/null)
-    local ahead_behind=$(command git rev-list --count --left-right @{upstream}...HEAD 2>/dev/null)
-    local ahead_count=$(echo $ahead_behind | awk '{print $1}')
-    local behind_count=$(echo $ahead_behind | awk '{print $2}')
+    # local git_status=$(command git status --porcelain -b 2>/dev/null)
+    local upstream_head=$(command git rev-list --count --left-right @{upstream}...HEAD 2>/dev/null)
+    local upstream_count=$(echo $upstream_head | awk '{print $1}')
+    local head_count=$(echo $upstream_head | awk '{print $2}')
 
-    # Use Git porcelain commands for faster execution
+    # # Use Git porcelain commands for faster execution
     local git_status=$(command git status --porcelain 2>/dev/null)
 
     if [[ -n $git_status ]]; then
@@ -28,51 +28,43 @@ prompt_mycustomprompt_precmd() {
         fi
         # Deleted
         if [[ $git_status =~ '^([[:space:]]D[[:space:]]|D[[:space:]]*|AD[[:space:]])' ]]; then
-            gitstatus+=( "%F{red}%f" )
+            gitstatus+=( "%F{red}󰆴%f" )
         fi
         # Renamed
         if [[ $git_status =~ '^R[[:space:]]*' ]]; then
-            gitstatus+=( "%F{magenta}->%f" )
+            gitstatus+=( "%F{magenta}%f" )
         fi
         # Untracked
         if [[ $git_status =~ '^\?\?[[:space:]]' ]]; then
-            gitstatus+=( "%F{white}%f" )
+            gitstatus+=( "%F{white}󰦀%f" )
         fi
 
         # Unmerged
         if [[ $git_status =~ '^(DD|AU|UD|UA|DU|AA|UU)' ]]; then
-            gitstatus+=( "%F{red}%%f" )
+            gitstatus+=( "%F{red}%f" )
         fi
     fi
 
-    # Ahead of master
-    if [[ -n $ahead_count && $ahead_count -gt 0 ]]; then
-        gitstatus+=( "%F{green}ahead%f" )
+    # Behind origin branch
+    if [[ -n $upstream_count && $upstream -gt 0 ]]; then
+        gitstatus+=( "%F{red}%f" )
     fi
 
-    # Behind master
-    if [[ -n $behind_count && $behind_count -gt 0 ]]; then
-        gitstatus+=( "%F{red}behind%f" )
+    # Ahead origin branch
+    if [[ -n $head_count && $head_count -gt 0 ]]; then
+        gitstatus+=( "%F{green}%f" )
     fi
 
     # Diverged
-    if [[ -n $ahead_count && -n $behind_count && $ahead_count -gt 0 && $behind_count -gt 0 ]]; then
-        gitstatus+=( "%F{yellow}diverged%f" )
+    if [[ -n $upstream_count && -n $head_count && $upstream_count -gt 0 && $head_count -gt 0 ]]; then
+        gitstatus+=( "%F{yellow}%f" )
     fi
 
-    # Stashed changes
-    local stashed_changes=$(command git rev-parse --verify refs/stash 2>/dev/null)
-    if [[ -n $stashed_changes ]]; then
-        gitstatus+=( "%F{red}%f" )
-    fi
+    joiner=$'%F{light_gray}%f'
+    joined="${(j. + .)gitstatus}"
+    joined="${joined// + /${joiner}}"
 
-    # Behind changes
-    local behind_master=$(command git rev-list --count --left-right @{upstream}...HEAD 2>/dev/null | awk '/^>/ {sum += $2} END {print sum}')
-    if [[ -n $behind_master && $behind_master -gt 0 ]]; then
-        gitstatus+=( "%F{red}%f" )
-    fi
-
-    psvar[1]="[${(j::)gitstatus}]"
+    psvar[1]="[${joined}]"
 }
 
 +vi-git-stash-count() {
