@@ -60,7 +60,6 @@ prompt_mycustomprompt_precmd() {
         gitstatus+=( "%F{yellow}%f" )
     fi
 
-    echo $#gitstatus
     if [[ $#gitstatus -ge 1 ]]; then
         joiner=$'%F{light_gray}%f'
         joined="${(j. + .)gitstatus}"
