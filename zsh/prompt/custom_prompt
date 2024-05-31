@@ -60,11 +60,18 @@ prompt_mycustomprompt_precmd() {
         gitstatus+=( "%F{yellow}%f" )
     fi
 
-    joiner=$'%F{light_gray}%f'
-    joined="${(j. + .)gitstatus}"
-    joined="${joined// + /${joiner}}"
+    echo $#gitstatus
+    if [[ $#gitstatus -ge 1 ]]; then
+        joiner=$'%F{light_gray}%f'
+        joined="${(j. + .)gitstatus}"
+        joined="[${${joined// + /${joiner}}}]"
+    elif [[ $#gitstatus -eq 0 ]]; then
+        joined=""
+    fi
 
-    psvar[1]="[${joined}]"
+    
+
+    psvar[1]=$joined
 }
 
 +vi-git-stash-count() {
