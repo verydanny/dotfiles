@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+ZSH_DISABLE_COMPFIX="true"
+
 fpath=($ZDOTDIR/plugins $fpath)
 
 # +------------+
@@ -41,7 +43,7 @@ source "$ZDOTDIR/aliases/aliases.sh"
 # | PROMPT |
 # +--------+
 fpath=($ZDOTDIR/prompt $fpath)
-autoload -Uz prompt_purification_setup; prompt_purification_setup
+autoload -Uz custom_prompt; custom_prompt
 
 # +------+
 # | rust |
@@ -57,9 +59,15 @@ source "$ZDOTDIR/.completions.zsh"
 # | Git |
 # +-----+
 # Add command gitit to open Github repo in default browser from a local repo
-source "$ZDOTDIR/plugins/gitit.zsh"
+# source "$ZDOTDIR/plugins/gitit.zsh"
 
 # +---------------------+
 # | SYNTAX HIGHLIGHTING |
 # +---------------------+
-source "$ZDOTDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+ZSH_HIGHLIGHT_INIT_DONE=0
+typeset -A ZSH_HIGHLIGHT_STYLES
+function () {
+  [[ $ZSH_HIGHLIGHT_INIT_DONE == 1 ]] && return
+  ZSH_HIGHLIGHT_INIT_DONE=1
+  source "$ZDOTDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+}

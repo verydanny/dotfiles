@@ -1,0 +1,100 @@
+autoload -Uz vcs_info add-zsh-hook
+
+prompt_mycustomprompt_precmd() {
+    vcs_info
+    RPS1=" ${vcs_info_msg_0_}${psvar[1]}"
+}
+
++vi-git-status() {
+    local -a gitstatus
+
+    # Use Git porcelain commands for faster execution
+    local git_status=$(command git status --porcelain -b 2>/dev/null)
+    local ahead_behind=$(command git rev-list --count --left-right @{upstream}...HEAD 2>/dev/null)
+    local ahead_count=$(echo $ahead_behind | awk '{print $1}')
+    local behind_count=$(echo $ahead_behind | awk '{print $2}')
+
+    # Use Git porcelain commands for faster execution
+    local git_status=$(command git status --porcelain 2>/dev/null)
+
+    if [[ -n $git_status ]]; then
+        # Added
+        if [[ $git_status =~ '^(A[[:space:]]*|M[[:space:]]*|MM[[:space:]])' ]]; then
+            gitstatus+=( "%F{green}%f" )
+        fi
+        # Modified
+        if [[ $git_status =~ '^([[:space:]]M[[:space:]]|AM[[:space:]]|MM[[:space:]]|[[:space:]]T[[:space:]])' ]]; then
+            gitstatus+=( "%F{blue}%f" )
+        fi
+        # Deleted
+        if [[ $git_status =~ '^([[:space:]]D[[:space:]]|D[[:space:]]*|AD[[:space:]])' ]]; then
+            gitstatus+=( "%F{red}%f" )
+        fi
+        # Renamed
+        if [[ $git_status =~ '^R[[:space:]]*' ]]; then
+            gitstatus+=( "%F{magenta}->%f" )
+        fi
+        # Untracked
+        if [[ $git_status =~ '^\?\?[[:space:]]' ]]; then
+            gitstatus+=( "%F{white}%f" )
+        fi
+
+        # Unmerged
+        if [[ $git_status =~ '^(DD|AU|UD|UA|DU|AA|UU)' ]]; then
+            gitstatus+=( "%F{red}%%f" )
+        fi
+    fi
+
+    # Ahead of master
+    if [[ -n $ahead_count && $ahead_count -gt 0 ]]; then
+        gitstatus+=( "%F{green}ahead%f" )
+    fi
+
+    # Behind master
+    if [[ -n $behind_count && $behind_count -gt 0 ]]; then
+        gitstatus+=( "%F{red}behind%f" )
+    fi
+
+    # Diverged
+    if [[ -n $ahead_count && -n $behind_count && $ahead_count -gt 0 && $behind_count -gt 0 ]]; then
+        gitstatus+=( "%F{yellow}diverged%f" )
+    fi
+
+    # Stashed changes
+    local stashed_changes=$(command git rev-parse --verify refs/stash 2>/dev/null)
+    if [[ -n $stashed_changes ]]; then
+        gitstatus+=( "%F{red}%f" )
+    fi
+
+    # Behind changes
+    local behind_master=$(command git rev-list --count --left-right @{upstream}...HEAD 2>/dev/null | awk '/^>/ {sum += $2} END {print sum}')
+    if [[ -n $behind_master && $behind_master -gt 0 ]]; then
+        gitstatus+=( "%F{red}%f" )
+    fi
+
+    psvar[1]="[${(j::)gitstatus}]"
+}
+
++vi-git-stash-count() {
+    local stash_count=$(command git stash list 2>/dev/null | wc -l)
+    psvar[2]=$stash_count
+}
+
++vi-git-behind-count() {
+    local behind_count=$(command git rev-list --count --left-right @{upstream}...HEAD 2>/dev/null | awk '/^>/ {print $2}')
+    psvar[3]=$behind_count
+}
+
+prompt_mycustomprompt_setup () {
+    add-zsh-hook precmd prompt_mycustomprompt_precmd   
+
+    zstyle ':vcs_info:*' enable git
+    zstyle ':vcs_info:git:*' formats '[%b]'
+    zstyle ':vcs_info:git:*' actionformats '[%b|%a]'
+    zstyle ':vcs_info:git*+set-message:*' hooks git-status git-stash-count git-behind-count
+
+    prompt_opts=( cr percent sp subst )
+    PS1='%2~ -> '
+}
+
+prompt_mycustomprompt_setup
