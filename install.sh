@@ -7,7 +7,7 @@ install_xcode
 install_homebrew
 install_fonts
 
-is_lib_installed && lib_install zsh
+is_lib_installed brew && lib_install zsh
 
 # Install Brew Git
 is_lib_installed brew && lib_install git

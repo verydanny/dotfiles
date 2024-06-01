@@ -71,3 +71,6 @@ function () {
   ZSH_HIGHLIGHT_INIT_DONE=1
   source "$ZDOTDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 }
+
+# bun completions
+[ -s "/opt/homebrew/Cellar/bun/1.1.10/share/zsh/site-functions/_bun" ] && source "/opt/homebrew/Cellar/bun/1.1.10/share/zsh/site-functions/_bun"

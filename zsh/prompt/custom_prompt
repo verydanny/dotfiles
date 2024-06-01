@@ -68,8 +68,6 @@ prompt_mycustomprompt_precmd() {
         joined=""
     fi
 
-    
-
     psvar[1]=$joined
 }
 
